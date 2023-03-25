@@ -1,20 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
-from typing import List, Optional, Union
-import numpy as np
 from Attention import Attention
-
-
-# https://github.com/huggingface/transformers/blob/main/src/transformers/tf_utils.py
-def shape_list(tensor: Union[tf.Tensor, np.ndarray]) -> List[int]:
-    if isinstance(tensor, np.ndarray):
-        return list(tensor.shape)
-    dynamic = tf.shape(tensor)
-    if tensor.shape == (None):
-        return dynamic
-    static = tensor.shape.as_list()
-    return [dynamic[i] if s is None else s for i, s in enumerate(static)]
 
 
 class DropPath(layers.Layer):
@@ -44,14 +31,13 @@ class DWConv(layers.Layer):
         )
 
     def call(self, x, H, W):
-        B = shape_list(x)[0]
-        C = shape_list(x)[-1]
-        x = tf.reshape(x, (B, H, W, C))
+        get_shape_1 = tf.shape(x)
+        x = tf.reshape(x, (get_shape_1[0], H, W, get_shape_1[-1]))
         x = self.dwconv(x)
-        NH = shape_list(x)[1]
-        NW = shape_list(x)[2]
-        C = shape_list(x)[3]
-        x = tf.reshape(x, (B, NH * NW, C))
+        get_shape_2 = tf.shape(x)
+        x = tf.reshape(
+            x, (get_shape_2[0], get_shape_2[1] * get_shape_2[2], get_shape_2[3])
+        )
         return x
 
 
@@ -88,6 +74,8 @@ class Block(layers.Layer):
         dim,
         num_heads,
         mlp_ratio=4.0,
+        qkv_bias=False,
+        qk_scale=None,
         drop=0.0,
         attn_drop=0.0,
         drop_path=0.0,
@@ -98,6 +86,8 @@ class Block(layers.Layer):
         self.attn = Attention(
             dim,
             num_heads=num_heads,
+            qkv_bias=qkv_bias,
+            qk_scale=qk_scale,
             attn_drop=attn_drop,
             proj_drop=drop,
             sr_ratio=sr_ratio,
@@ -134,11 +124,12 @@ class OverlapPatchEmbed(layers.Layer):
 
     def call(self, x):
         x = self.conv(x)
-        H = shape_list(x)[1]
-        W = shape_list(x)[2]
-        x = tf.reshape(x, (-1, H * W, shape_list(x)[3]))
+        get_shapes = tf.shape(x)
+        H = get_shapes[1]
+        W = get_shapes[2]
+        C = get_shapes[3]
+        x = tf.reshape(x, (-1, H * W, C))
         x = self.norm(x)
-        print(x.shape)
         return x, H, W
 
 
@@ -147,11 +138,12 @@ class MixVisionTransformer(layers.Layer):
         self,
         img_size=224,
         patch_size=16,
-        in_chans=3,
         num_classes=1000,
         embed_dims=[64, 128, 256, 512],
         num_heads=[1, 2, 4, 8],
         mlp_ratios=[4, 4, 4, 4],
+        qkv_bias=False,
+        qk_scale=None,
         drop_rate=0.0,
         attn_drop_rate=0.0,
         drop_path_rate=0.0,
@@ -188,16 +180,15 @@ class MixVisionTransformer(layers.Layer):
             filters=embed_dims[3],
         )
 
-        # transformer encoder
-        dpr = [
-            x for x in tf.linspace(0.0, drop_path_rate, sum(depths))
-        ]  # stochastic depth decay rule
+        dpr = [x for x in tf.linspace(0.0, drop_path_rate, sum(depths))]
         cur = 0
         self.block1 = [
             Block(
                 dim=embed_dims[0],
                 num_heads=num_heads[0],
                 mlp_ratio=mlp_ratios[0],
+                qkv_bias=qkv_bias,
+                qk_scale=qk_scale,
                 drop=drop_rate,
                 attn_drop=attn_drop_rate,
                 drop_path=dpr[cur + i],
@@ -213,6 +204,8 @@ class MixVisionTransformer(layers.Layer):
                 dim=embed_dims[1],
                 num_heads=num_heads[1],
                 mlp_ratio=mlp_ratios[1],
+                qkv_bias=qkv_bias,
+                qk_scale=qk_scale,
                 drop=drop_rate,
                 attn_drop=attn_drop_rate,
                 drop_path=dpr[cur + i],
@@ -228,6 +221,8 @@ class MixVisionTransformer(layers.Layer):
                 dim=embed_dims[2],
                 num_heads=num_heads[2],
                 mlp_ratio=mlp_ratios[2],
+                qkv_bias=qkv_bias,
+                qk_scale=qk_scale,
                 drop=drop_rate,
                 attn_drop=attn_drop_rate,
                 drop_path=dpr[cur + i],
@@ -243,6 +238,8 @@ class MixVisionTransformer(layers.Layer):
                 dim=embed_dims[3],
                 num_heads=num_heads[3],
                 mlp_ratio=mlp_ratios[3],
+                qkv_bias=qkv_bias,
+                qk_scale=qk_scale,
                 drop=drop_rate,
                 attn_drop=attn_drop_rate,
                 drop_path=dpr[cur + i],
@@ -261,8 +258,8 @@ class MixVisionTransformer(layers.Layer):
         for i, blk in enumerate(self.block1):
             x = blk(x, H, W)
         x = self.norm1(x)
-        x = tf.reshape(x, (B, H, W, -1))
-        x = tf.transpose(x, perm=[0, 3, 1, 2])
+        x = tf.reshape(x, (B, H, W, tf.shape(x)[-1]))
+        print(x.shape)
         outs.append(x)
 
         # stage 2
@@ -270,8 +267,8 @@ class MixVisionTransformer(layers.Layer):
         for i, blk in enumerate(self.block2):
             x = blk(x, H, W)
         x = self.norm2(x)
-        x = tf.reshape(x, (B, H, W, -1))
-        x = tf.transpose(x, perm=[0, 3, 1, 2])
+        x = tf.reshape(x, (B, H, W, tf.shape(x)[-1]))
+        print(x.shape)
         outs.append(x)
 
         # stage 3
@@ -279,8 +276,8 @@ class MixVisionTransformer(layers.Layer):
         for i, blk in enumerate(self.block3):
             x = blk(x, H, W)
         x = self.norm3(x)
-        x = tf.reshape(x, (B, H, W, -1))
-        x = tf.transpose(x, perm=[0, 3, 1, 2])
+        x = tf.reshape(x, (B, H, W, tf.shape(x)[-1]))
+        print(x.shape)
         outs.append(x)
 
         # stage 4
@@ -288,8 +285,8 @@ class MixVisionTransformer(layers.Layer):
         for i, blk in enumerate(self.block4):
             x = blk(x, H, W)
         x = self.norm4(x)
-        x = tf.reshape(x, (B, H, W, -1))
-        x = tf.transpose(x, perm=[0, 3, 1, 2])
+        x = tf.reshape(x, (B, H, W, tf.shape(x)[-1]))
+        print(x.shape)
         outs.append(x)
 
         return outs
@@ -312,3 +309,4 @@ x = MixVisionTransformer(
     drop_path_rate=0.1,
 )(input_layer)
 model = tf.keras.Model(inputs=input_layer, outputs=x)
+print(model.summary())
