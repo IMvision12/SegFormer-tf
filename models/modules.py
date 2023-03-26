@@ -137,22 +137,21 @@ class MixVisionTransformer(layers.Layer):
     def __init__(
         self,
         img_size=224,
-        patch_size=16,
-        num_classes=1000,
-        embed_dims=[64, 128, 256, 512],
-        num_heads=[1, 2, 4, 8],
-        mlp_ratios=[4, 4, 4, 4],
-        qkv_bias=False,
-        qk_scale=None,
-        drop_rate=0.0,
-        attn_drop_rate=0.0,
-        drop_path_rate=0.0,
-        depths=[3, 4, 6, 3],
-        sr_ratios=[8, 4, 2, 1],
+        embed_dims=None,
+        depths=None,
     ):
         super().__init__()
-        self.num_classes = num_classes
         self.depths = depths
+
+        # Parameters same for all backbones
+        num_heads = [1, 2, 5, 8]
+        mlp_ratios = [4, 4, 4, 4]
+        sr_ratios = [8, 4, 2, 1]
+        qkv_bias = True
+        qk_scale = None
+        drop_rate = 0.0
+        drop_path_rate = 0.1
+        attn_drop_rate = 0.0
 
         # patch_embed
         self.patch_embed1 = OverlapPatchEmbed(
@@ -259,7 +258,6 @@ class MixVisionTransformer(layers.Layer):
             x = blk(x, H, W)
         x = self.norm1(x)
         x = tf.reshape(x, (B, H, W, tf.shape(x)[-1]))
-        print(x.shape)
         outs.append(x)
 
         # stage 2
@@ -268,7 +266,6 @@ class MixVisionTransformer(layers.Layer):
             x = blk(x, H, W)
         x = self.norm2(x)
         x = tf.reshape(x, (B, H, W, tf.shape(x)[-1]))
-        print(x.shape)
         outs.append(x)
 
         # stage 3
@@ -277,7 +274,6 @@ class MixVisionTransformer(layers.Layer):
             x = blk(x, H, W)
         x = self.norm3(x)
         x = tf.reshape(x, (B, H, W, tf.shape(x)[-1]))
-        print(x.shape)
         outs.append(x)
 
         # stage 4
@@ -286,7 +282,6 @@ class MixVisionTransformer(layers.Layer):
             x = blk(x, H, W)
         x = self.norm4(x)
         x = tf.reshape(x, (B, H, W, tf.shape(x)[-1]))
-        print(x.shape)
         outs.append(x)
 
         return outs
@@ -294,19 +289,3 @@ class MixVisionTransformer(layers.Layer):
     def call(self, x):
         x = self.call_features(x)
         return x
-
-
-input_layer = tf.keras.layers.Input(shape=(224, 224, 3))
-x = MixVisionTransformer(
-    img_size=224,
-    patch_size=4,
-    embed_dims=[32, 64, 160, 256],
-    num_heads=[1, 2, 5, 8],
-    mlp_ratios=[4, 4, 4, 4],
-    depths=[2, 2, 2, 2],
-    sr_ratios=[8, 4, 2, 1],
-    drop_rate=0.0,
-    drop_path_rate=0.1,
-)(input_layer)
-model = tf.keras.Model(inputs=input_layer, outputs=x)
-print(model.summary())

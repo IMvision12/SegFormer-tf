@@ -4,17 +4,18 @@ from tensorflow.keras import layers
 
 
 class MLP(layers.Layer):
-    def __init__(self, embed_dim=256):
+    def __init__(self, embed_dim=768):
         super().__init__()
         self.proj = layers.Dense(embed_dim)
 
     def forward(self, x):
         get_shape = tf.shape(x)
+        B = get_shape[0]
         H = get_shape[1]
         W = get_shape[2]
         dim = get_shape[-1]
 
-        x = tf.reshape(x, (-1, H*W, dim))
+        x = tf.reshape(x, (B, H*W, dim))
         x = self.proj(x)
         return x
     
@@ -36,22 +37,16 @@ class SegFormerHead(layers.Layer):
         self.cls = tf.keras.layers.Conv2D(filters=num_classes, kernel_size=1)
 
     def call(self, x):
-        B = tf.shape(x[0])[0]
+        get_shape = tf.shape(x[0])
+        H = get_shape[1]
+        W = get_shape[2]
         outputs = []
-        for x, mlp in zip(x, self.mlps):
-            x = tf.transpose(x, perm=[0, 2, 3, 1])
-            H = tf.shape(x)[1]
-            W = tf.shape(x)[2]
-            x = mlp(x)
-            x = tf.reshape(x, (B, H, W, -1))
+        for feat, mlp in zip(x, self.mlps):
+            x = mlp(feat)
+            x = tf.image.resize(x, size=(H, W), method='bilinear')
+            outputs.append(x)
 
-            # upsample
-            temp_state = tf.transpose(x[0], perm=[0, 2, 3, 1])
-            upsample_resolution = tf.shape(temp_state)[1:-1]
-            x = tf.image.resize(x, size=upsample_resolution, method="bilinear")
-            outputs += (x,)
-
-        x = self.linear_fuse(tf.concat(outputs[::-1], axis=1))
+        x = self.linear_fuse(tf.concat(outputs[::-1], axis=3))
         x = self.norm(x)
         x = self.act(x)
         x = self.cls(x)
