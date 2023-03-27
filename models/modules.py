@@ -1,20 +1,6 @@
 import tensorflow as tf
 from .Attention import Attention
-
-
-class DropPath(tf.keras.layers.Layer):
-    def __init__(self, drop_path, **kwargs):
-        super().__init__(**kwargs)
-        self.drop_path = drop_path
-
-    def call(self, x, training=None):
-        if training:
-            keep_prob = 1 - self.drop_path
-            shape = (tf.shape(x)[0],) + (1,) * (len(tf.shape(x)) - 1)
-            random_tensor = keep_prob + tf.random.uniform(shape, 0, 1)
-            random_tensor = tf.floor(random_tensor)
-            return (x / keep_prob) * random_tensor
-        return x
+from .utils import DropPath
 
 
 class DWConv(tf.keras.layers.Layer):
