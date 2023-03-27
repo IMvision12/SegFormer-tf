@@ -1,6 +1,6 @@
 #[WIP]
 
-- [ ] Add Model
+- [x] Add Model
 - [ ] Train on custom dataset
 
 # SegFormer-tf
