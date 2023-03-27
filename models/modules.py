@@ -15,7 +15,8 @@ class DropPath(tf.keras.layers.Layer):
             random_tensor = tf.floor(random_tensor)
             return (x / keep_prob) * random_tensor
         return x
-    
+
+
 class DWConv(tf.keras.layers.Layer):
     def __init__(self, filters=768, **kwargs):
         super().__init__(**kwargs)
