@@ -1,7 +1,8 @@
 #[WIP]
 
 - [x] Add Model
-- [ ] Train on custom dataset
+- [ ] Train on ADE20k dataset
+- [ ] Train on cityscapes
 
 # SegFormer-tf
 
