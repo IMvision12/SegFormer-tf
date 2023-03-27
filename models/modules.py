@@ -1,5 +1,5 @@
 import tensorflow as tf
-from Attention import Attention
+from .Attention import Attention
 
 
 class DropPath(tf.keras.layers.Layer):

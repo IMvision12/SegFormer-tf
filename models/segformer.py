@@ -1,6 +1,6 @@
 import tensorflow as tf
-from modules import MixVisionTransformer
-from Head import SegFormerHead
+from .modules import MixVisionTransformer
+from .Head import SegFormerHead
 
 MODEL_CONFIGS = {
     "mit_b0": {
