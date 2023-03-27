@@ -5,8 +5,20 @@
 
 # SegFormer-tf
 
+This repository is about an implementation of the research paper "SegFormer: Simple and Efficient Design for Semantic Segmentation with Transformers"
+
+SegFormer is a Transformer-based framework for semantic segmentation that unifies Transformers with lightweight multilayer perceptron (MLP) decoders.
+
 Paper : https://arxiv.org/pdf/2105.15203
 
 #### Model Architecture :
 
-<img width="979" alt="c84b18b5-4329-49fc-a5f2-804ef580a966" src="https://user-images.githubusercontent.com/88665786/215752739-6969b6f5-d2b0-4b04-8634-09ef33ae10d5.png">
+<p align="center">
+  <img src="https://github.com/IMvision12/SegFormer-tf/blob/main/images/arch.png" title="graph">
+</p>
+
+#### Detailed overview of MiT :
+
+<p align="center">
+  <img src="https://github.com/IMvision12/SegFormer-tf/blob/main/images/mit.png" title="graph">
+</p>
