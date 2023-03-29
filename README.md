@@ -10,8 +10,6 @@ This repository is about an implementation of the research paper "SegFormer: Sim
 
 SegFormer is a Transformer-based framework for semantic segmentation that unifies Transformers with lightweight multilayer perceptron (MLP) decoders.
 
-Paper : https://arxiv.org/pdf/2105.15203
-
 #### Model Architecture :
 
 <p align="center">
@@ -23,3 +21,10 @@ Paper : https://arxiv.org/pdf/2105.15203
 <p align="center">
   <img src="https://github.com/IMvision12/SegFormer-tf/blob/main/images/mit.png" title="graph">
 </p>
+
+
+# References
+
+[1] SegFormer paper: https://arxiv.org/pdf/2105.15203
+
+[2] Official SegFormer Repo: https://github.com/NVlabs/SegFormer
