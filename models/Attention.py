@@ -27,15 +27,15 @@ class Attention(tf.keras.layers.Layer):
 
         self.attn_drop = tf.keras.layers.Dropout(attn_drop)
 
-        self.proj = tf.keras.layers.Dense(dim)
-        self.proj_drop = tf.keras.layers.Dropout(proj_drop)
-
         self.sr_ratio = sr_ratio
         if sr_ratio > 1:
             self.sr = tf.keras.layers.Conv2D(
                 filters=dim, kernel_size=sr_ratio, strides=sr_ratio
             )
             self.norm = tf.keras.layers.LayerNormalization(epsilon=1e-05)
+           
+        self.proj = tf.keras.layers.Dense(dim)
+        self.proj_drop = tf.keras.layers.Dropout(proj_drop)
 
     def call(
         self,
