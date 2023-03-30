@@ -22,6 +22,21 @@ SegFormer is a Transformer-based framework for semantic segmentation that unifie
   <img src="https://github.com/IMvision12/SegFormer-tf/blob/main/images/mit.png" title="graph">
 </p>
 
+# Usage:
+
+Clone Github Repo: 
+```
+!git clone https://github.com/IMvision12/SegFormer-tf.git
+cd SegFormer-tf
+```
+Then import model
+```
+import tensorflow as tf
+from models import SegFormer_B3
+model = SegFormer_B3(input_shape = (224, 224, 3), num_classes = 19)
+print(model.summary(expand_nested=True))
+```
+
 
 # References
 
