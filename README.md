@@ -34,7 +34,7 @@ Then import model
 import tensorflow as tf
 from models import SegFormer_B3
 model = SegFormer_B3(input_shape = (224, 224, 3), num_classes = 19)
-print(model.summary(expand_nested=True))
+print(model.summary())
 ```
 
 
