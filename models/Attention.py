@@ -21,9 +21,9 @@ class Attention(tf.keras.layers.Layer):
         self.units = self.num_heads * self.head_dim
         self.sqrt_of_units = math.sqrt(self.head_dim)
 
-        self.q = tf.keras.layers.Dense(self.units, use_bias=qkv_bias)
-        self.k = tf.keras.layers.Dense(self.units, use_bias=qkv_bias)
-        self.v = tf.keras.layers.Dense(self.units, use_bias=qkv_bias)
+        self.q = tf.keras.layers.Dense(self.units)
+        self.k = tf.keras.layers.Dense(self.units)
+        self.v = tf.keras.layers.Dense(self.units)
 
         self.attn_drop = tf.keras.layers.Dropout(attn_drop)
 
