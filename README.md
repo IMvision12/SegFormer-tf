@@ -25,10 +25,12 @@ SegFormer is a Transformer-based framework for semantic segmentation that unifie
 # Usage:
 
 Clone Github Repo: 
+
+```bash
+$ git clone git clone https://github.com/IMvision12/SegFormer-tf
+$ cd SegFormer-tf
 ```
-!git clone https://github.com/IMvision12/SegFormer-tf.git
-cd SegFormer-tf
-```
+
 Then import model
 ```
 import tensorflow as tf
