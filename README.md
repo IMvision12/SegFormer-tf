@@ -32,7 +32,8 @@ $ cd SegFormer-tf
 ```
 
 Then import model
-```
+
+```py
 import tensorflow as tf
 from models import SegFormer_B3
 model = SegFormer_B3(input_shape = (224, 224, 3), num_classes = 19)
