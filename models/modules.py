@@ -102,6 +102,7 @@ class OverlapPatchEmbed(tf.keras.layers.Layer):
             kernel_size=patch_size,
             strides=stride,
             padding="VALID",
+            name='proj',
         )
         self.norm = tf.keras.layers.LayerNormalization(epsilon=1e-05)
 
