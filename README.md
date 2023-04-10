@@ -1,8 +1,7 @@
 #[WIP]
 
 - [x] Add Model
-- [ ] Train on ADE20k dataset
-- [ ] Train on cityscapes
+- [ ] Weight Conversion(in progress)
 
 # SegFormer-tf
 
