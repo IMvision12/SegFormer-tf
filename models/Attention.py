@@ -30,7 +30,7 @@ class Attention(tf.keras.layers.Layer):
         self.sr_ratio = sr_ratio
         if sr_ratio > 1:
             self.sr = tf.keras.layers.Conv2D(
-                filters=dim, kernel_size=sr_ratio, strides=sr_ratio
+                filters=dim, kernel_size=sr_ratio, strides=sr_ratio, name='sr',
             )
             self.norm = tf.keras.layers.LayerNormalization(epsilon=1e-05)
            
