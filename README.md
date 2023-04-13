@@ -26,7 +26,7 @@ SegFormer is a Transformer-based framework for semantic segmentation that unifie
 Clone Github Repo: 
 
 ```bash
-$ git clone git clone https://github.com/IMvision12/SegFormer-tf
+$ git clone https://github.com/IMvision12/SegFormer-tf
 $ cd SegFormer-tf
 ```
 
