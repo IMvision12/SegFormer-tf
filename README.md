@@ -1,8 +1,3 @@
-#[WIP]
-
-- [x] Add Model
-- [ ] Weight Conversion(in progress)
-
 # SegFormer-tf
 
 This repository is about an implementation of the research paper "SegFormer: Simple and Efficient Design for Semantic Segmentation with Transformers"
