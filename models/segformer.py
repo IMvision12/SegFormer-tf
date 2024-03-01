@@ -1,4 +1,5 @@
-import tensorflow as tf
+import keras
+from keras import ops
 from .modules import MixVisionTransformer
 from .Head import SegFormerHead
 from .utils import ResizeLayer
@@ -38,7 +39,7 @@ MODEL_CONFIGS = {
 
 
 def SegFormer_B0(input_shape, num_classes):
-    input_layer = tf.keras.layers.Input(shape=input_shape)
+    input_layer = keras.layers.Input(shape=input_shape)
     x = MixVisionTransformer(
         img_size=input_shape[1],
         embed_dims=MODEL_CONFIGS["mit_b0"]["embed_dims"],
@@ -50,12 +51,12 @@ def SegFormer_B0(input_shape, num_classes):
     )(x)
 
     x = ResizeLayer(input_shape[0], input_shape[1])(x)
-    x = tf.nn.softmax(x)
-    return tf.keras.Model(inputs=input_layer, outputs=x)
+    x = ops.softmax(x)
+    return keras.Model(inputs=input_layer, outputs=x)
 
 
 def SegFormer_B1(input_shape, num_classes):
-    input_layer = tf.keras.layers.Input(shape=input_shape)
+    input_layer = keras.layers.Input(shape=input_shape)
     x = MixVisionTransformer(
         img_size=input_shape[1],
         embed_dims=MODEL_CONFIGS["mit_b1"]["embed_dims"],
@@ -67,12 +68,12 @@ def SegFormer_B1(input_shape, num_classes):
     )(x)
 
     x = ResizeLayer(input_shape[0], input_shape[1])(x)
-    x = tf.nn.softmax(x)
-    return tf.keras.Model(inputs=input_layer, outputs=x)
+    x = ops.softmax(x)
+    return keras.Model(inputs=input_layer, outputs=x)
 
 
 def SegFormer_B2(input_shape, num_classes):
-    input_layer = tf.keras.layers.Input(shape=input_shape)
+    input_layer = keras.layers.Input(shape=input_shape)
     x = MixVisionTransformer(
         img_size=input_shape[1],
         embed_dims=MODEL_CONFIGS["mit_b2"]["embed_dims"],
@@ -84,12 +85,12 @@ def SegFormer_B2(input_shape, num_classes):
     )(x)
 
     x = ResizeLayer(input_shape[0], input_shape[1])(x)
-    x = tf.nn.softmax(x)
-    return tf.keras.Model(inputs=input_layer, outputs=x)
+    x = ops.softmax(x)
+    return keras.Model(inputs=input_layer, outputs=x)
 
 
 def SegFormer_B3(input_shape, num_classes):
-    input_layer = tf.keras.layers.Input(shape=input_shape)
+    input_layer = keras.layers.Input(shape=input_shape)
     x = MixVisionTransformer(
         img_size=input_shape[1],
         embed_dims=MODEL_CONFIGS["mit_b3"]["embed_dims"],
@@ -101,12 +102,12 @@ def SegFormer_B3(input_shape, num_classes):
     )(x)
 
     x = ResizeLayer(input_shape[0], input_shape[1])(x)
-    x = tf.nn.softmax(x)
-    return tf.keras.Model(inputs=input_layer, outputs=x)
+    x = ops.softmax(x)
+    return keras.Model(inputs=input_layer, outputs=x)
 
 
 def SegFormer_B4(input_shape, num_classes):
-    input_layer = tf.keras.layers.Input(shape=input_shape)
+    input_layer = keras.layers.Input(shape=input_shape)
     x = MixVisionTransformer(
         img_size=input_shape[1],
         embed_dims=MODEL_CONFIGS["mit_b4"]["embed_dims"],
@@ -118,12 +119,12 @@ def SegFormer_B4(input_shape, num_classes):
     )(x)
 
     x = ResizeLayer(input_shape[0], input_shape[1])(x)
-    x = tf.nn.softmax(x)
-    return tf.keras.Model(inputs=input_layer, outputs=x)
+    x = ops.softmax(x)
+    return keras.Model(inputs=input_layer, outputs=x)
 
 
 def SegFormer_B5(input_shape, num_classes):
-    input_layer = tf.keras.layers.Input(shape=input_shape)
+    input_layer = keras.layers.Input(shape=input_shape)
     x = MixVisionTransformer(
         img_size=input_shape[1],
         embed_dims=MODEL_CONFIGS["mit_b5"]["embed_dims"],
@@ -135,5 +136,5 @@ def SegFormer_B5(input_shape, num_classes):
     )(x)
 
     x = ResizeLayer(input_shape[0], input_shape[1])(x)
-    x = tf.nn.softmax(x)
-    return tf.keras.Model(inputs=input_layer, outputs=x)
+    x = ops.softmax(x)
+    return keras.Model(inputs=input_layer, outputs=x)

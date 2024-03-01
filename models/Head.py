@@ -1,24 +1,24 @@
-import tensorflow as tf
+import keras
+from keras import ops
 
-
-class MLP(tf.keras.layers.Layer):
+class MLP(keras.layers.Layer):
     def __init__(self, decode_dim):
         super().__init__()
-        self.proj = tf.keras.layers.Dense(decode_dim)
+        self.proj = keras.layers.Dense(decode_dim)
 
     def call(self, x):
         x = self.proj(x)
         return x
 
 
-class ConvModule(tf.keras.layers.Layer):
+class ConvModule(keras.layers.Layer):
     def __init__(self, decode_dim):
         super().__init__()
-        self.conv = tf.keras.layers.Conv2D(
+        self.conv = keras.layers.Conv2D(
             filters=decode_dim, kernel_size=1, use_bias=False
         )
-        self.bn = tf.keras.layers.BatchNormalization(epsilon=1e-5, momentum=0.9)
-        self.activate = tf.keras.layers.ReLU()
+        self.bn = keras.layers.BatchNormalization(epsilon=1e-5, momentum=0.9)
+        self.activate = keras.layers.ReLU()
 
     def call(self, x):
         x = self.conv(x)
@@ -27,7 +27,7 @@ class ConvModule(tf.keras.layers.Layer):
         return x
 
 
-class SegFormerHead(tf.keras.layers.Layer):
+class SegFormerHead(keras.layers.Layer):
     def __init__(self, num_mlp_layers=4, decode_dim=768, num_classes=19):
         super().__init__()
 
@@ -36,20 +36,20 @@ class SegFormerHead(tf.keras.layers.Layer):
             self.linear_layers.append(MLP(decode_dim))
 
         self.linear_fuse = ConvModule(decode_dim)
-        self.dropout = tf.keras.layers.Dropout(0.1)
-        self.linear_pred = tf.keras.layers.Conv2D(num_classes, kernel_size=1)
+        self.dropout = keras.layers.Dropout(0.1)
+        self.linear_pred = keras.layers.Conv2D(num_classes, kernel_size=1)
 
     def call(self, inputs):
-        H = tf.shape(inputs[0])[1]
-        W = tf.shape(inputs[0])[2]
+        H = ops.shape(inputs[0])[1]
+        W = ops.shape(inputs[0])[2]
         outputs = []
 
         for x, mlps in zip(inputs, self.linear_layers):
             x = mlps(x)
-            x = tf.image.resize(x, size=(H, W), method="bilinear")
+            x = ops.image.resize(x, size=(H, W), interpolation="bilinear")
             outputs.append(x)
 
-        x = self.linear_fuse(tf.concat(outputs[::-1], axis=3))
+        x = self.linear_fuse(ops.concatenate(outputs[::-1], axis=3))
         x = self.dropout(x)
         x = self.linear_pred(x)
 
